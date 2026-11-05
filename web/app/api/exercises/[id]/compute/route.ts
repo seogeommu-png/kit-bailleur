@@ -9,7 +9,10 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { computeOrLoadExercise } from 'decompte-charges-engine/dist/db/compute.js'
+import { computeOrLoadExercise } from '@/lib/compute'
+
+
+
 
 export async function POST(
   request: NextRequest,
@@ -17,11 +20,17 @@ export async function POST(
 ) {
   const supabase = createServiceClient()
 
+
+
+
   // Vérifier l'authentification (via cookie de session)
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   }
+
+
+
 
   let forceRecompute = false
   try {
@@ -30,6 +39,9 @@ export async function POST(
   } catch {
     // Body vide — OK
   }
+
+
+
 
   try {
     const result = await computeOrLoadExercise(supabase, params.id, {
@@ -42,3 +54,6 @@ export async function POST(
     return NextResponse.json({ error: message }, { status })
   }
 }
+
+
+
